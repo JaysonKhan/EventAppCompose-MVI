@@ -14,11 +14,11 @@ import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
 import uz.gita.eventappcompose.MainActivity
 import uz.gita.eventappcompose.R
-import uz.gita.eventappcompose.utils.broadcast.EventReciver
+import uz.gita.eventappcompose.utils.broadcast.EventReceiver
 
 class EventService:Service() {
     private val CHANNEL_ID = "KHAN347"
-    private val receiver = EventReciver()
+    private val receiver = EventReceiver()
 
     override fun onBind(intent: Intent?): IBinder? = null
 
@@ -41,7 +41,6 @@ class EventService:Service() {
             addAction(Intent.ACTION_POWER_DISCONNECTED)
             addAction(Intent.ACTION_TIMEZONE_CHANGED)
             addAction(Intent.ACTION_TIME_CHANGED)
-            addAction(Intent.ACTION_DEVICE_STORAGE_LOW)
             addAction(Intent.ACTION_SHUTDOWN)
             addAction(Intent.ACTION_DATE_CHANGED)
         })
@@ -107,7 +106,7 @@ class EventService:Service() {
 
     override fun onDestroy() {
         super.onDestroy()
-        receiver.clearReciver()
+        receiver.clearReceiver()
         unregisterReceiver(receiver)
     }
 }

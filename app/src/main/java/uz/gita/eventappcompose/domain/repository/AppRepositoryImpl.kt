@@ -58,12 +58,6 @@ class AppRepositoryImpl
                 ),
 
                 EventEntity(
-                    id = 5,
-                    eventIcon = R.drawable.ic_storage_low,
-                    eventName = R.string.storage_low,
-                    events = Intent.ACTION_DEVICE_STORAGE_LOW
-                ),
-                EventEntity(
                     id = 6,
                     eventIcon = R.drawable.ic_airplane,
                     eventName = R.string.text_airplane,

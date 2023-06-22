@@ -44,6 +44,7 @@ import javax.inject.Inject
 class MainActivity : ComponentActivity() {
     private val NOTIFICATION_PERMISSION_REQUEST_CODE = 1
 
+
     @Inject
     lateinit var useCase: UseCase
     val scope = CoroutineScope(Dispatchers.Main + SupervisorJob())
@@ -54,6 +55,7 @@ class MainActivity : ComponentActivity() {
                 val arrayList = ArrayList<String>()
 
                 for (i in list.indices) {
+
                     arrayList.add(list[i].events)
                 }
                 val intent = Intent(this@MainActivity, EventService::class.java)
