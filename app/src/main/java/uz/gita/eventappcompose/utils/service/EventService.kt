@@ -1,5 +1,6 @@
 package uz.gita.eventappcompose.utils.service
 
+import android.app.Notification.Action
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -10,6 +11,7 @@ import android.content.IntentFilter
 import android.os.Build
 import android.os.IBinder
 import android.util.Log
+import android.view.View
 import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
 import uz.gita.eventappcompose.MainActivity
@@ -47,6 +49,9 @@ class EventService:Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        if (intent?.getStringExtra("STOP") == "STOP") {
+            stopSelf() // Servisni to'xtatish
+        }
         return START_NOT_STICKY
     }
 
@@ -65,10 +70,10 @@ class EventService:Service() {
 
         val notification = NotificationCompat
             .Builder(this, CHANNEL_ID)
-            .setSmallIcon(R.drawable.logo)
+            .setSmallIcon(R.mipmap.ic_launcher_round)
             .setContentTitle("Event App")
             .setContentIntent(pendingIntent)
-            .setOngoing(true)
+            .setOngoing(false)
             .setCustomContentView(createNotificationLayout())
             .build()
 
@@ -77,14 +82,28 @@ class EventService:Service() {
 
     private fun createNotificationLayout(): RemoteViews {
         val view = RemoteViews(packageName, R.layout.remote_view)
-        view.setOnClickPendingIntent(R.id.closeButton, createPendingIntent())
+        // Yopish tugmasi bosilganda notificationni yopish uchun PendingIntent yaratish
+        val closeIntent = Intent(this, EventService::class.java).apply {
+            putExtra("STOP", "STOP")
+        }
+        val closePendingIntent = PendingIntent.getService(
+            this,
+            1,
+            closeIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+    /*    view.setInt(
+            R.id.notificationLayout,
+            "setBackgroundResource",
+            R.drawable.logo
+        )*/
+        view.setOnClickPendingIntent(R.id.manageState, createPendingIntent())
+        view.setOnClickPendingIntent(R.id.closeButton, closePendingIntent)
         return view
-
     }
 
     private fun createPendingIntent(): PendingIntent {
         val intent = Intent(this, EventService::class.java)
-        intent.putExtra("STOP", "STOP")
         return PendingIntent
             .getService(
                 this,

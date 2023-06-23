@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">EventAppCompose</string>
+    <string name="app_name">My Events</string>
     <string name="enabled">Enabled\n</string>
     <string name="events">Events</string>
     <string name="more">More</string>
