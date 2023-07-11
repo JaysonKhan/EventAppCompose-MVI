@@ -36,7 +36,6 @@ class HomeScreen:AndroidScreen() {
                 is EventTurnedOn -> {
                     Toast.makeText(context, sideEffect.name, Toast.LENGTH_SHORT).show()
                 }
-
                 is HomeContract.SideEffect.EventTurnedOff -> {
                     Toast.makeText(context, sideEffect.name, Toast.LENGTH_SHORT).show()
                 }
@@ -80,13 +79,9 @@ class HomeScreen:AndroidScreen() {
                       }
                   }
               }
-
           }
-
       }
-
     }
-
     @Preview(showSystemUi = true)
     @Composable
     fun PrevHome(){
