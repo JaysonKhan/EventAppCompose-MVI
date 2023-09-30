@@ -17,54 +17,51 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeModel @Inject constructor(
     private val useCase: UseCase
-):HomeContract.Model, ViewModel() {
-    override val container = container<HomeContract.UiState, HomeContract.SideEffect>(HomeContract.UiState.Loading)
+) : HomeContract.Model, ViewModel() {
+    override val container =
+        container<HomeContract.UiState, HomeContract.SideEffect>(HomeContract.UiState.Loading)
 
     override fun eventDispatcher(intent: HomeContract.Intent) {
-       when(intent){
-          is HomeContract.Intent.LoadEvents -> {
-               viewModelScope.launch{
-                   useCase.getAllEvents().onEach {
-                       intent{
-                           reduce {
-                               Log.d("TTT", "LoadEvent")
-                               HomeContract.UiState.EventList(it)
-                           }
-                       }
-                   }.launchIn(viewModelScope)
-               }
-           }
-           is HomeContract.Intent.EnableEvent -> {
-                   useCase.updateEventStateToEnable(intent.eventsData.id).launchIn(viewModelScope)
-               intent{
-                   postSideEffect(HomeContract.SideEffect.EventTurnedOn("${intent.eventsData.eventName.toString()} turned ON"))
-               }
-           }
-           is HomeContract.Intent.DisableEvent -> {
-                   useCase.updateEventStateToDisable(intent.eventsData.id).launchIn(viewModelScope)
-               intent{
-                   postSideEffect(HomeContract.SideEffect.EventTurnedOn("${intent.eventsData.eventName.toString()} turned OFF"))
-               }
-           }
-       }
-    }
-/*
-    private val getAllEnableEventsObserver = Observer<List<EventsData>> { list ->
-        Log.d("CCC", "getAllEnableEventsObserver: $list")
-        val arrayList = ArrayList<String>()
+        when (intent) {
+            is HomeContract.Intent.LoadEvents -> {
+                viewModelScope.launch {
+                    useCase.getAllEvents().onEach {
+                        intent {
+                            reduce {
+                                HomeContract.UiState.EventList(it)
+                            }
+                        }
+                    }.launchIn(viewModelScope)
+                }
+            }
 
-        for (i in list.indices) {
-            arrayList.add(list[i].events)
-        }
-        val intent = Intent(requireContext(), EventService::class.java)
-        intent.putStringArrayListExtra("enabledActions", arrayList)
+            is HomeContract.Intent.EnableEvent -> {
+                viewModelScope.launch {
+                    useCase.updateEventStateToEnable(intent.eventsData.id).launchIn(viewModelScope)
+                    useCase.getAllEvents().onEach {
+                        intent {
+                            postSideEffect(HomeContract.SideEffect.EventTurnedOn("${intent.eventsData.eventName} turned ON"))
+                            reduce {
+                                HomeContract.UiState.EventList(it)
+                            }
+                        }
+                    }.launchIn(viewModelScope)
+                }
+            }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            requireActivity().startForegroundService(intent)
-        } else {
-            requireActivity().startService(intent)
+            is HomeContract.Intent.DisableEvent -> {
+                viewModelScope.launch {
+                    useCase.updateEventStateToDisable(intent.eventsData.id).launchIn(viewModelScope)
+                    useCase.getAllEvents().onEach {
+                        intent {
+                            postSideEffect(HomeContract.SideEffect.EventTurnedOn("${intent.eventsData.eventName} turned OFF"))
+                            reduce {
+                                HomeContract.UiState.EventList(it)
+                            }
+                        }
+                    }.launchIn(viewModelScope)
+                }
+            }
         }
-        adapter.submitList(list)
-        binding.recyclerScreen.adapter = adapter
-        binding.recyclerScreen.layoutManager = LinearLayoutManager(requireContext())*/
     }
+}
